@@ -2,8 +2,37 @@
 const crypto = require('crypto');
 const axios = require('axios');
 
-const generateSecurePassword = () => {
-    return crypto.randomBytes(12).toString('hex');
+
+
+// Helper function to generate a password with the given criteria
+const generateSecurePassword = (length, includeNumbers, includeSymbols, includeUppercase) => {
+    const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';
+    const uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const numberChars = '0123456789';
+    const symbolChars = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+
+    let characters = lowercaseChars;
+
+    if (includeUppercase) {
+        characters += uppercaseChars;
+    }
+
+    if (includeNumbers) {
+        characters += numberChars;
+    }
+
+    if (includeSymbols) {
+        characters += symbolChars;
+    }
+
+    // Generate a password of the required length
+    let password = '';
+    for (let i = 0; i < length; i++) {
+        const randomIndex = crypto.randomInt(0, characters.length);
+        password += characters[randomIndex];
+    }
+
+    return password;
 };
 
 const checkPasswordBreach = async (password) => {

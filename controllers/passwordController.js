@@ -12,17 +12,28 @@ const getPasswords = async (req, res) => {
 };
 
 const createPassword = async (req, res) => {
+    // console.log("Received request to create password"); // Log when the function is called
     const { siteName, usernameOrEmail, password } = req.body;
+
+    // console.log("Request body:", req.body); // Log the request body
+
     try {
         const newPassword = await Password.create({
-            userId: req.user.id,
+            userId: req.user._id,
             siteName,
             usernameOrEmail,
             password,
         });
         res.status(201).json(newPassword);
+        // console.log("New password created:", newPassword); // Log the created password
+
     } catch (error) {
         res.status(500).json({ message: error.message });
+        // console.error("Error creating password:", error); // Log the error
+        // console.log(req.user._id);
+        // console.log('Password model:', password);
+        // console.log('Type of Password.create:', typeof password.create);
+
     }
 };
 
@@ -52,8 +63,10 @@ const deletePassword = async (req, res) => {
 };
 
 const generatePassword = async (req, res) => {
+    const { length, includeNumbers, includeSymbols, includeUppercase } = req.body;
+
     try {
-        const securePassword = generateSecurePassword();
+        const securePassword = generateSecurePassword(length, includeNumbers, includeSymbols, includeUppercase);
         res.json({ password: securePassword });
     } catch (error) {
         res.status(500).json({ message: error.message });
